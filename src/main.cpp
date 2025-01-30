@@ -1,5 +1,6 @@
 #include <iostream>
 #include <list>
+#include <limits>
 
 using namespace std;
 
@@ -49,6 +50,9 @@ DisplayMainMenu()
     cout << "5. Exit Application" << endl;
     cout << "Choice: ";
     cin >> userInput;
+    // largest possible number of input to ignore || ignore when n is found
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     cout << endl;
 
     if (userInput == ADD)
@@ -80,9 +84,81 @@ DisplayMainMenu()
 void CreateRecipe()
 {
   Recipe r;
+  int ExitRecipeCreate = 0;
   cout << "Create new Recipe" << endl;
-  cin >> r.recipeName;
-}
+
+  while (true)
+  {
+    cout << "Enter Recipe name: ";
+    getline(cin, r.recipeName);
+    if (r.recipeName.empty())
+    {
+      cout << "Recipe must not be empty" << endl;
+      continue;
+    }
+    break;
+  }
+  while (true)
+  {
+    cout << "Enter number of servings: ";
+    cin >> r.servings;
+
+    if (cin.fail() || r.servings <= 0)
+    {
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << "Invalid serving (serving must be number greater than 0)" << endl;
+      continue;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    break;
+  }
+  while (true)
+  {
+    cout << "Enter Ingredients(Leave blank if finished)" << endl;
+    // Item-name, Item-quantity, Item-Unit
+    Ingredient i;
+    cout << "Ingredient Name: ";
+    getline(cin, i.name);
+    if (i.name.empty())
+    {
+      if (r.ingredients.empty())
+      {
+        cout << endl
+             << "A recipe must have atleast one ingredient" << endl
+             << endl;
+        continue;
+      }
+      break;
+    }
+    while (true)
+    {
+      cout << "Ingredient Quantity: ";
+      cin >> i.quantity;
+      if (cin.fail() || i.quantity <= 0)
+      {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid quantity (quantity must be number greater than 0)" << endl;
+        continue;
+      }
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      break;
+    }
+    while (true)
+    {
+      cout << "Unit: ";
+      getline(cin, i.unit);
+      if (i.unit.empty())
+      {
+        cout << "Unit cannot be empty";
+        continue;
+      }
+      break;
+    };
+    r.ingredients.push_front(i);
+  };
+};
 
 int main()
 {
@@ -101,6 +177,5 @@ int main()
       break;
     }
   }
-
   return 0;
 }
