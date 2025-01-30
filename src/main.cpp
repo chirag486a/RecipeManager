@@ -1,17 +1,42 @@
 #include <iostream>
+#include <list>
 
 using namespace std;
 
-enum UserInput
+enum MainMenuUserInput
 {
-  ADD,
+  ADD = 1,
   VIEW,
   EDIT,
   DELETE,
   EXIT
 };
+// Item-name, Item-quantity, Item-Unit
+struct Ingredient
+{
+  string name;
+  float quantity;
+  string unit;
+};
 
-UserInput DisplayMainMenu()
+struct RecipeStep
+{
+  int stepNo;
+  string stepTask;
+};
+
+struct Recipe
+{
+  string recipeName;
+  float servings;
+  list<Ingredient> ingredients;
+  list<RecipeStep> recipeStep;
+};
+
+list<Recipe> Recipes = {};
+
+MainMenuUserInput
+DisplayMainMenu()
 {
   while (true)
   {
@@ -52,12 +77,29 @@ UserInput DisplayMainMenu()
   }
 };
 
+void CreateRecipe()
+{
+  Recipe r;
+  cout << "Create new Recipe" << endl;
+  cin >> r.recipeName;
+}
+
 int main()
 {
 
   while (true)
   {
-    UserInput u = DisplayMainMenu();
+    MainMenuUserInput u = DisplayMainMenu();
+    switch (u)
+    {
+    case ADD:
+    {
+      CreateRecipe();
+      break;
+    };
+    default:
+      break;
+    }
   }
 
   return 0;
