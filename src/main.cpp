@@ -1,9 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <list>
 #include <limits>
 
 using namespace std;
 
+string filename = "data";
 enum MainMenuUserInput
 {
   ADD = 1,
@@ -19,22 +21,17 @@ struct Ingredient
   float quantity;
   string unit;
 };
-
-struct RecipeStep
-{
-  int stepNo;
-  string stepTask;
-};
+typedef string RecipeStep;
 
 struct Recipe
 {
   string recipeName;
   float servings;
   list<Ingredient> ingredients;
-  list<RecipeStep> recipeStep;
+  list<RecipeStep> recipeSteps;
 };
 
-list<Recipe> Recipes = {};
+list<Recipe> recipes = {};
 
 MainMenuUserInput
 DisplayMainMenu()
@@ -80,6 +77,75 @@ DisplayMainMenu()
          << endl;
   }
 };
+
+string serializer()
+{
+  string delimeter = ",";
+  string d = "";
+  string RecipeName = "Recipe: ";
+  string ServingsName = "Servings: ";
+  string NewLine = "\n";
+  string IngredientsName = "Ingredients: ";
+  string StepsName = "Steps: ";
+  string RecipeDelimeter = "---";
+  for (const auto &recipe : recipes)
+  {
+    d += RecipeName + recipe.recipeName + NewLine;
+    d += ServingsName + to_string(recipe.servings) + NewLine;
+
+    d += IngredientsName + NewLine;
+    for (const auto &ingredient : recipe.ingredients)
+    {
+      d += ingredient.name + delimeter + to_string(ingredient.quantity) + delimeter + ingredient.unit + NewLine;
+    };
+    d += StepsName + NewLine;
+    for (const auto &recipeStep : recipe.recipeSteps)
+    {
+      d += recipeStep + NewLine;
+    }
+    d += RecipeDelimeter + NewLine;
+  }
+
+  return d;
+}
+void deserializer(string data)
+{
+  string delimeter = ",";
+  string RecipeName = "Recipe: ";
+  string ServingsName = "Servings: ";
+  string NewLine = "\n";
+  string IngredientsName = "Ingredients: ";
+  string StepsName = "Steps: ";
+  string RecipeDelimeter = "---";
+
+  string line = "";
+
+  istringstream ss(data);
+  
+}
+
+void saveToFile()
+{
+  ofstream outfile(filename, ios::binary);
+  if (outfile)
+  {
+  std:
+    cerr << "Error opening file for saving" << endl;
+    return;
+  }
+  outfile << serializer();
+  outfile.close();
+}
+// void loadFromFile()
+// {
+//   ifstream infile(filename, ios::binary);
+//   if (!infile)
+//   {
+//     std::cerr << "Error loading from file" << endl;
+//     return;
+//   }
+//   infile.read(reinterpret_cast<char *> recipes, )
+// }
 
 void CreateRecipe()
 {
@@ -158,6 +224,28 @@ void CreateRecipe()
     };
     r.ingredients.push_front(i);
   };
+  int stepCount = 0;
+  cout
+      << "Enter steps to prepare(Leaave blank if finished)" << r.recipeName << endl;
+  while (true)
+  {
+    RecipeStep recipeStep;
+    cout << "Step " << ++stepCount << ": ";
+    getline(cin, recipeStep);
+    if (recipeStep.empty() && r.recipeSteps.empty())
+    {
+      cout << "A Recipe must have atleast one step.";
+      continue;
+    }
+    if (recipeStep.empty())
+    {
+      break;
+    }
+    r.recipeSteps.push_front(recipeStep);
+  }
+  recipes.push_front(r);
+  string s = serializer();
+  cout << s << endl;
 };
 
 int main()
