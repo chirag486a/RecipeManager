@@ -2,10 +2,11 @@
 #include <fstream>
 #include <list>
 #include <limits>
+#include <sstream>
 
 using namespace std;
 
-string filename = "data";
+string filename = "./build/data.txt";
 enum MainMenuUserInput
 {
   ADD = 1,
@@ -48,9 +49,14 @@ DisplayMainMenu()
     cout << "Choice: ";
     cin >> userInput;
     // largest possible number of input to ignore || ignore when n is found
+    if (cin.fail())
+    {
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << "Invalid Command";
+      continue;
+    }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    cout << endl;
 
     if (userInput == ADD)
     {
@@ -108,44 +114,102 @@ string serializer()
 
   return d;
 }
-void deserializer(string data)
+int deserializer(string s)
 {
-  string delimeter = ",";
-  string RecipeName = "Recipe: ";
-  string ServingsName = "Servings: ";
-  string NewLine = "\n";
-  string IngredientsName = "Ingredients: ";
-  string StepsName = "Steps: ";
-  string RecipeDelimeter = "---";
+  int totalRecipe = 0;
+  const string delimeter = ",";
+  const string NewLine = "\n";
+  const string RecipeName = "Recipe: ";
+  const string ServingsName = "Servings: ";
+  const string IngredientsName = "Ingredients: ";
+  const string StepsName = "Steps: ";
+  const string RecipeDelimeter = "---";
 
+  istringstream ss(s);
   string line = "";
+  bool readingIngredients = false;
+  bool readingSteps = false;
 
-  istringstream ss(data);
-  
+  Recipe currentRecipe;
+  while (getline(ss, line))
+  {
+
+    if (line.substr(0, RecipeName.length()) == RecipeName)
+    {
+      currentRecipe = Recipe();
+      currentRecipe.recipeName = line.substr(RecipeName.length());
+    }
+    else if (line.substr(0, ServingsName.length()) == ServingsName)
+    {
+      currentRecipe.servings = stof(line.substr(ServingsName.length()));
+    }
+    else if (line.substr(0, IngredientsName.length()) == IngredientsName)
+    {
+      readingIngredients = true;
+      readingSteps = false;
+    }
+    else if (line.substr(0, StepsName.length()) == StepsName)
+    {
+      readingIngredients = false;
+      readingSteps = true;
+    }
+    else if (readingIngredients == true)
+    {
+      size_t d1 = line.find(delimeter);
+      size_t d2 = line.find(delimeter, d1 + 1);
+      Ingredient i;
+      i.name = line.substr(0, d1);
+      i.quantity = stof(line.substr(d1 + 1, d2 - 1));
+      i.unit = line.substr(d2 + 1);
+
+      currentRecipe.ingredients.push_back(i);
+    }
+    else if (line == RecipeDelimeter)
+    {
+      recipes.push_back(currentRecipe);
+      totalRecipe++;
+    }
+    else if (readingSteps == true)
+    {
+      currentRecipe.recipeSteps.push_back(line);
+    }
+  }
+  return totalRecipe;
 }
 
 void saveToFile()
 {
   ofstream outfile(filename, ios::binary);
-  if (outfile)
+  if (!outfile)
   {
   std:
     cerr << "Error opening file for saving" << endl;
     return;
   }
-  outfile << serializer();
+  string s = serializer();
+  outfile << s;
   outfile.close();
 }
-// void loadFromFile()
-// {
-//   ifstream infile(filename, ios::binary);
-//   if (!infile)
-//   {
-//     std::cerr << "Error loading from file" << endl;
-//     return;
-//   }
-//   infile.read(reinterpret_cast<char *> recipes, )
-// }
+int loadFromFile()
+{
+  ifstream infile(filename, ios::binary);
+  if (!infile)
+  {
+    std::cerr << "Error loading from file" << endl;
+    return -1;
+  }
+  string line;
+  string NewLine = "\n";
+  string data = "";
+  while (getline(infile, line))
+  {
+    data += line + NewLine;
+  }
+
+  int totalRecipe = 0;
+  totalRecipe = deserializer(data);
+  return totalRecipe;
+}
 
 void CreateRecipe()
 {
@@ -244,8 +308,7 @@ void CreateRecipe()
     r.recipeSteps.push_front(recipeStep);
   }
   recipes.push_front(r);
-  string s = serializer();
-  cout << s << endl;
+  saveToFile();
 };
 
 int main()
@@ -253,6 +316,8 @@ int main()
 
   while (true)
   {
+    loadFromFile();
+
     MainMenuUserInput u = DisplayMainMenu();
     switch (u)
     {
