@@ -3,6 +3,7 @@
 #include <list>
 #include <limits>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -28,11 +29,11 @@ struct Recipe
 {
   string recipeName;
   float servings;
-  list<Ingredient> ingredients;
-  list<RecipeStep> recipeSteps;
+  vector<Ingredient> ingredients;
+  vector<RecipeStep> recipeSteps;
 };
 
-list<Recipe> recipes = {};
+vector<Recipe> recipes = {};
 
 MainMenuUserInput
 DisplayMainMenu()
@@ -62,11 +63,11 @@ DisplayMainMenu()
     {
       return ADD;
     }
-    if (userInput == EDIT)
-    {
-      return EDIT;
-    }
     if (userInput == VIEW)
+    {
+      return VIEW;
+    }
+    if (userInput == EDIT)
     {
       return EDIT;
     }
@@ -211,6 +212,7 @@ int loadFromFile()
   return totalRecipe;
 }
 
+
 void CreateRecipe()
 {
   Recipe r;
@@ -286,7 +288,8 @@ void CreateRecipe()
       }
       break;
     };
-    r.ingredients.push_front(i);
+    r.ingredients.push_back(i);
+    // r.ingredients.push_front(i);
   };
   int stepCount = 0;
   cout
@@ -305,11 +308,12 @@ void CreateRecipe()
     {
       break;
     }
-    r.recipeSteps.push_front(recipeStep);
+    r.recipeSteps.push_back(recipeStep);
   }
-  recipes.push_front(r);
+  recipes.push_back(r);
   saveToFile();
 };
+
 
 int main()
 {
@@ -326,6 +330,10 @@ int main()
       CreateRecipe();
       break;
     };
+    case VIEW:
+    {
+      break;
+    }
     default:
       break;
     }
