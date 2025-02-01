@@ -212,6 +212,26 @@ int loadFromFile()
   return totalRecipe;
 }
 
+void DisplayRecipe(const Recipe &recipe)
+{
+  string tab = "\t";
+  string space = " ";
+  cout << "---" << endl;
+  cout << "Recipe Name: " << recipe.recipeName << endl;
+  cout << "Servings: " << recipe.servings << endl;
+  cout << "Ingredients: " << endl;
+  for (const Ingredient &i : recipe.ingredients)
+  {
+    cout << tab << i.name << tab << i.quantity << space << i.unit << endl;
+  }
+  cout << "Steps " << endl;
+  size_t s = recipe.recipeSteps.size();
+  for (size_t i = 0; i < s; i++)
+  {
+    cout << "Step " << i << ": " << recipe.recipeSteps[i] << endl;
+  }
+  cout << "---" << endl;
+}
 
 void CreateRecipe()
 {
@@ -314,6 +334,29 @@ void CreateRecipe()
   saveToFile();
 };
 
+void DisplayRecipeCMD()
+{
+  cout << "Enter Recipes number to view: " << endl;
+  for (size_t i = 0; i < recipes.size(); i++)
+  {
+    cout << i << ": " << recipes[i].recipeName << endl;
+  }
+
+  while (true)
+  {
+    cout << "Recipe number: ";
+    int userInput;
+    cin >> userInput;
+    // largest possible number of input to ignore || ignore when n is found
+    if (cin.fail())
+    {
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << "Invalid Command";
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  }
+}
 
 int main()
 {
@@ -332,6 +375,7 @@ int main()
     };
     case VIEW:
     {
+      DisplayRecipeCMD();
       break;
     }
     default:
