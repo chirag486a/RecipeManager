@@ -14,6 +14,7 @@ enum MainMenuUserInput
   VIEW,
   EDIT,
   DELETE,
+  FIND,
   EXIT
 };
 // Item-name, Item-quantity, Item-Unit
@@ -35,6 +36,22 @@ struct Recipe
 
 vector<Recipe> recipes = {};
 
+float numInputHandler()
+{
+  float userInput;
+  cin >>
+      userInput;
+  // largest possible number of input to ignore || ignore when \n is found
+  if (cin.fail() || userInput < 0)
+  {
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    return -1;
+  }
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  return userInput;
+}
+
 MainMenuUserInput
 DisplayMainMenu()
 {
@@ -46,18 +63,15 @@ DisplayMainMenu()
     cout << "2. View Recipe" << endl;
     cout << "3. Edit Recipe" << endl;
     cout << "4. Delete Recipe" << endl;
-    cout << "5. Exit Application" << endl;
+    cout << "5. Find Recipe" << endl;
+    cout << "6. Exit Application" << endl;
+
     cout << "Choice: ";
-    cin >> userInput;
-    // largest possible number of input to ignore || ignore when n is found
-    if (cin.fail())
+    userInput = numInputHandler();
+    if (userInput == -1)
     {
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-      cout << "Invalid Command";
       continue;
     }
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     if (userInput == ADD)
     {
@@ -70,6 +84,10 @@ DisplayMainMenu()
     if (userInput == EDIT)
     {
       return EDIT;
+    }
+    if (userInput == FIND)
+    {
+      return FIND;
     }
     if (userInput == DELETE)
     {
@@ -251,19 +269,17 @@ void CreateRecipe()
     }
     break;
   }
+
   while (true)
   {
     cout << "Enter number of servings: ";
-    cin >> r.servings;
 
-    if (cin.fail() || r.servings <= 0)
+    r.servings = numInputHandler();
+    if (r.servings == -1)
     {
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       cout << "Invalid serving (serving must be number greater than 0)" << endl;
       continue;
     }
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     break;
   }
   while (true)
@@ -287,15 +303,11 @@ void CreateRecipe()
     while (true)
     {
       cout << "Ingredient Quantity: ";
-      cin >> i.quantity;
-      if (cin.fail() || i.quantity <= 0)
+      i.quantity = numInputHandler();
+      if (i.quantity == -1)
       {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Invalid quantity (quantity must be number greater than 0)" << endl;
-        continue;
       }
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       break;
     }
     while (true)
@@ -356,19 +368,15 @@ void DeleteRecipeCMD()
   while (true)
   {
     cout << "Enter Recipes number to Delete(0 to exit): ";
-    cin >> deleteRecipeNumber;
-    if (cin.fail() || deleteRecipeNumber < 0)
+    deleteRecipeNumber = numInputHandler();
+    if (deleteRecipeNumber == -1)
     {
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-      cout << "Invalid recipe number" << endl;
+      cout << "Invalid input or negative number" << endl;
       continue;
     }
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     if (deleteRecipeNumber == 0)
-    {
       return;
-    }
     if (deleteRecipe(deleteRecipeNumber - 1) == -1)
     {
       cout << endl
@@ -432,16 +440,15 @@ void DisplayRecipeCMD()
   while (true)
   {
     cout << "Recipe number: (0 to exit)";
-    cin >> recipeNumber;
-    if (cin.fail())
+    recipeNumber = numInputHandler();
+
+    if (recipeNumber == -1)
     {
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       cout << "Either recipe doesnot exist or invalid input.";
       continue;
     }
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    break;
+    if (recipeNumber == 0)
+      break;
   }
 
   if (recipeNumber == 0)
@@ -452,20 +459,27 @@ void DisplayRecipeCMD()
   while (true)
   {
     cout << "No of servings(0 for default): ";
-    cin >> servingsNumber;
-    if (cin.fail())
+    servingsNumber = numInputHandler();
+    if (servingsNumber == -1)
     {
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       cout << "Invalid Servings";
       continue;
     }
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     break;
   }
 
   Recipe generateNewRecipe = generateRecipeForServings(recipes[recipeNumber - 1], servingsNumber);
   DisplayRecipe(generateNewRecipe);
+}
+void EditRecipeCMD()
+{
+  cout << "Editing..." << endl;
+  return;
+}
+void FindRecipeCMD()
+{
+  cout << "Finding..." << endl;
+  return;
 }
 
 int main()
@@ -486,6 +500,16 @@ int main()
     case VIEW:
     {
       DisplayRecipeCMD();
+      break;
+    }
+    case EDIT:
+    {
+      EditRecipeCMD();
+      break;
+    }
+    case FIND:
+    {
+      FindRecipeCMD();
       break;
     }
     case DELETE:
