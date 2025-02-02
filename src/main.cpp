@@ -180,7 +180,7 @@ int deserializer(string s)
 
 void saveToFile()
 {
-  ofstream outfile(filename, ios::binary);
+  ofstream outfile(filename, ios::out);
   if (!outfile)
   {
     cerr << "Error opening file for saving" << endl;
@@ -192,7 +192,7 @@ void saveToFile()
 }
 int loadFromFile()
 {
-  ifstream infile(filename, ios::binary);
+  ifstream infile(filename, ios::in);
   if (!infile)
   {
     std::cerr << "Error loading from file" << endl;
@@ -335,6 +335,65 @@ void CreateRecipe()
   saveToFile();
 };
 
+int deleteRecipe(size_t index)
+{
+  if (index < recipes.size())
+  {
+    recipes.erase(recipes.begin() + index);
+    return 1;
+  }
+  return -1;
+}
+
+void DeleteRecipeCMD()
+{
+  cout << endl;
+  for (size_t i = 0; i < recipes.size(); i++)
+  {
+    cout << i + 1 << ": " << recipes[i].recipeName << endl;
+  }
+  int deleteRecipeNumber = 0;
+  while (true)
+  {
+    cout << "Enter Recipes number to Delete(0 to exit): ";
+    cin >> deleteRecipeNumber;
+    if (cin.fail() || deleteRecipeNumber < 0)
+    {
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << "Invalid recipe number" << endl;
+      continue;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    if (deleteRecipeNumber == 0)
+    {
+      return;
+    }
+    if (deleteRecipe(deleteRecipeNumber - 1) == -1)
+    {
+      cout << endl
+           << "Invalid recipe number" << endl;
+      continue;
+    }
+    saveToFile();
+    cout << endl;
+    cout << "Recipe Delete successfully " << endl;
+    cout << "Press ENTER to back Main." << endl;
+    cout << "Enter d to DELETE Again." << endl;
+    string c;
+    getline(cin, c);
+    if (c == "d")
+    {
+      DeleteRecipeCMD();
+    }
+    if (c.empty())
+    {
+      break;
+    }
+    break;
+  }
+}
+
 Recipe generateRecipeForServings(const Recipe r, int newServings)
 {
   if (newServings == 0)
@@ -372,7 +431,7 @@ void DisplayRecipeCMD()
   int recipeNumber;
   while (true)
   {
-    cout << "Recipe number: ";
+    cout << "Recipe number: (0 to exit)";
     cin >> recipeNumber;
     if (cin.fail())
     {
@@ -383,6 +442,11 @@ void DisplayRecipeCMD()
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     break;
+  }
+
+  if (recipeNumber == 0)
+  {
+    return;
   }
   int servingsNumber = 0;
   while (true)
@@ -407,9 +471,9 @@ void DisplayRecipeCMD()
 int main()
 {
 
+  loadFromFile();
   while (true)
   {
-    loadFromFile();
 
     MainMenuUserInput u = DisplayMainMenu();
     switch (u)
@@ -423,6 +487,10 @@ int main()
     {
       DisplayRecipeCMD();
       break;
+    }
+    case DELETE:
+    {
+      DeleteRecipeCMD();
     }
     default:
       break;
