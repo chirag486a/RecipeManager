@@ -183,7 +183,6 @@ void saveToFile()
   ofstream outfile(filename, ios::binary);
   if (!outfile)
   {
-  std:
     cerr << "Error opening file for saving" << endl;
     return;
   }
@@ -214,21 +213,23 @@ int loadFromFile()
 
 void DisplayRecipe(const Recipe &recipe)
 {
-  string tab = "\t";
+  string tab = "  ";
   string space = " ";
   cout << "---" << endl;
   cout << "Recipe Name: " << recipe.recipeName << endl;
   cout << "Servings: " << recipe.servings << endl;
+  cout << endl;
   cout << "Ingredients: " << endl;
   for (const Ingredient &i : recipe.ingredients)
   {
     cout << tab << i.name << tab << i.quantity << space << i.unit << endl;
   }
-  cout << "Steps " << endl;
+  cout << endl;
+  cout << "Procedures to prepare " << recipe.recipeName << endl;
   size_t s = recipe.recipeSteps.size();
   for (size_t i = 0; i < s; i++)
   {
-    cout << "Step " << i << ": " << recipe.recipeSteps[i] << endl;
+    cout << tab << "Step " << i + 1 << ": " << recipe.recipeSteps[i] << endl;
   }
   cout << "---" << endl;
 }
@@ -334,28 +335,73 @@ void CreateRecipe()
   saveToFile();
 };
 
+Recipe generateRecipeForServings(const Recipe r, int newServings)
+{
+  if (newServings == 0)
+  {
+    return r;
+  }
+
+  Recipe newRecipe = Recipe();
+  newRecipe.recipeName = r.recipeName;
+  newRecipe.servings = newServings;
+  Ingredient newIngredient;
+  for (const auto &ing : r.ingredients)
+  {
+    newIngredient = Ingredient();
+    newIngredient.name = ing.name;
+    newIngredient.quantity = (ing.quantity / r.servings) * newServings;
+    newIngredient.unit = ing.unit;
+    newRecipe.ingredients.push_back(newIngredient);
+  }
+  for (const auto &step : r.recipeSteps)
+  {
+    newRecipe.recipeSteps.push_back(step);
+  }
+  return newRecipe;
+}
+
 void DisplayRecipeCMD()
 {
   cout << "Enter Recipes number to view: " << endl;
   for (size_t i = 0; i < recipes.size(); i++)
   {
-    cout << i << ": " << recipes[i].recipeName << endl;
+    cout << i + 1 << ": " << recipes[i].recipeName << endl;
   }
 
+  int recipeNumber;
   while (true)
   {
     cout << "Recipe number: ";
-    int userInput;
-    cin >> userInput;
-    // largest possible number of input to ignore || ignore when n is found
+    cin >> recipeNumber;
     if (cin.fail())
     {
       cin.clear();
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
-      cout << "Invalid Command";
+      cout << "Either recipe doesnot exist or invalid input.";
+      continue;
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    break;
   }
+  int servingsNumber = 0;
+  while (true)
+  {
+    cout << "No of servings(0 for default): ";
+    cin >> servingsNumber;
+    if (cin.fail())
+    {
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << "Invalid Servings";
+      continue;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    break;
+  }
+
+  Recipe generateNewRecipe = generateRecipeForServings(recipes[recipeNumber - 1], servingsNumber);
+  DisplayRecipe(generateNewRecipe);
 }
 
 int main()
