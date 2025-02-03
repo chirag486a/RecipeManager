@@ -1,0 +1,12 @@
+{
+  "files.associations": {
+    "*.ejs": "ejs",
+    "*.css": "css",
+    "cctype": "cpp",
+    "ostream": "cpp",
+    "iostream": "cpp",
+    "iosfwd": "cpp",
+    "limits": "cpp"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
+}
