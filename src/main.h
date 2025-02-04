@@ -2,13 +2,13 @@
 #define MAINH
 
 #include <iostream>
+#include <vector>
 
-#include "Recipe.h"
-#include "input/input.h"
+#include "./recipe.h"
+#include "./input/input.h"
+#include "./tasks/task.h"
 
 using namespace std;
-
-string filename = "data.txt";
 
 enum MainMenuUserInput
 {

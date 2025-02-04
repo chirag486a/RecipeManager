@@ -19,6 +19,7 @@ int GetInput(float &num)
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return -1;
   }
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
   return 1;
 }
 
@@ -31,5 +32,6 @@ int GetInput(int &num)
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return -1;
   }
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
   return 1;
 }

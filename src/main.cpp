@@ -1,6 +1,7 @@
 #include "main.h"
 
 vector<Recipe> recipes;
+string filename;
 
 MainMenuUserInput
 DisplayMainMenu()
@@ -58,10 +59,20 @@ DisplayMainMenu()
 void AddCMD()
 {
   cout << "Adding..." << endl;
+  Recipe r = Recipe();
+  AskData(r);
+  recipes.push_back(r);
+  saveToFile(filename, recipes);
 }
 void ViewCMD()
 {
   cout << "Viewing..." << endl;
+  int size = AskRecipeNoToShow(recipes);
+  if (size <= 0)
+  {
+    return;
+  }
+  ShowRecipe(recipes[size - 1]);
 }
 void EditCMD()
 {
@@ -82,6 +93,7 @@ void ExitCMD()
 
 int main()
 {
+  filename = "./data.txt";
   while (true)
   {
     MainMenuUserInput u = DisplayMainMenu();
