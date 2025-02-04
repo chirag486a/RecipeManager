@@ -2,16 +2,8 @@
 
 void AskRecipeName(string &str)
 {
-  while (true)
-  {
-    cout << "Enter Recipe name: ";
-    int status = GetInput(str);
-    if (status == 0)
-    {
-      cout << "Recipe must be not be empty " << endl;
-    }
-    break;
-  }
+  cout << "Enter Recipe name(leave blank to exit): ";
+  GetInput(str);
 };
 
 void AskServings(int &num)
@@ -58,6 +50,7 @@ void AskIngredients(vector<Ingredient> &ingredients)
       if (status == -1)
       {
         cout << "Invalid quantity (quantity must be number greater than 0)" << endl;
+        continue;
       }
       break;
     }
@@ -102,14 +95,19 @@ void AskSteps(vector<string> &steps, const string recipeName)
   }
 }
 
-void AskData(Recipe &r)
+int AskData(Recipe &r)
 {
   cout << "Create new Recipe" << endl;
 
   AskRecipeName(r.name);
+  if (r.name.empty())
+  {
+    return 0;
+  }
   AskServings(r.servings);
   AskIngredients(r.ingredient);
   AskSteps(r.steps, r.name);
+  return 1;
 }
 
 int AskRecipeNoToShow(const vector<Recipe> &recipes)
@@ -121,7 +119,7 @@ int AskRecipeNoToShow(const vector<Recipe> &recipes)
     if (recipes.size() == 0)
     {
       cout << endl;
-      cout << "No recipe to show" << endl;
+      cout << "No recipe found" << endl;
       cout << endl;
       return 0;
     }
@@ -133,14 +131,14 @@ int AskRecipeNoToShow(const vector<Recipe> &recipes)
     }
     cout << "Recipe number(0 to exit): ";
     int status = GetInput(recipeNumber);
-    if (status == 0)
+    if (recipeNumber == 0)
       return 0;
     if (status == -1)
     {
       cout << "Invalid input" << endl;
       continue;
     }
-    if (recipeNumber <= 0 || recipeNumber > recipes.size())
+    if (recipeNumber < 0 || recipeNumber > recipes.size())
     {
       cout << "Choice must be positive number from given list" << endl;
       continue;

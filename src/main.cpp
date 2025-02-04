@@ -58,21 +58,47 @@ DisplayMainMenu()
 
 void AddCMD()
 {
-  cout << "Adding..." << endl;
-  Recipe r = Recipe();
-  AskData(r);
-  recipes.push_back(r);
-  saveToFile(filename, recipes);
+  while (true)
+  {
+    cout << "Adding..." << endl;
+    Recipe r = Recipe();
+    if(AskData(r) == 0)
+    {
+      return;
+    }
+    recipes.push_back(r);
+    saveToFile(filename, recipes);
+    cout << "Recipe added" << endl;
+    cout << "Enter 0 to go back: ";
+    string status = "";
+    GetInput(status);
+    if (status == "0")
+    {
+      return;
+    }
+  }
 }
 void ViewCMD()
 {
   cout << "Viewing..." << endl;
-  int size = AskRecipeNoToShow(recipes);
-  if (size <= 0)
+  while (true)
   {
-    return;
+    int size = AskRecipeNoToShow(recipes);
+    if (size <= 0)
+    {
+      return;
+    }
+    cout << endl;
+    ShowRecipe(recipes[size - 1]);
+    cout << endl;
+    cout << "Enter 0 to go back: ";
+    string status = "";
+    GetInput(status);
+    if (status == "0")
+    {
+      return;
+    }
   }
-  ShowRecipe(recipes[size - 1]);
 }
 void EditCMD()
 {
@@ -84,7 +110,24 @@ void SearchCMD()
 }
 void DeleteCMD()
 {
-  cout << "Deleting..." << endl;
+  while (true)
+  {
+    cout << "Deleting..." << endl;
+    int recipeNumber = DeleteRecipe(recipes);
+    if (recipeNumber == 0)
+      return;
+    if (recipeNumber >= 0)
+    {
+      saveToFile(filename, recipes);
+      cout << "Enter 0 to go back: ";
+      string status = "";
+      GetInput(status);
+      if (status == "0")
+      {
+        return;
+      }
+    }
+  }
 }
 void ExitCMD()
 {
@@ -94,6 +137,7 @@ void ExitCMD()
 int main()
 {
   filename = "./build/data.txt";
+  loadFromFile(filename, recipes);
   while (true)
   {
     MainMenuUserInput u = DisplayMainMenu();
