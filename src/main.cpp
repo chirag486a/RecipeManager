@@ -93,7 +93,7 @@ void ExitCMD()
 
 int main()
 {
-  filename = "./data.txt";
+  filename = "./build/data.txt";
   while (true)
   {
     MainMenuUserInput u = DisplayMainMenu();
