@@ -1,4 +1,5 @@
 #include "main.h"
+#include <cstdlib>
 
 vector<Recipe> recipes;
 string filename;
@@ -139,6 +140,8 @@ void DeleteCMD()
 void ExitCMD()
 {
   cout << "Exiting..." << endl;
+  cout << "Goodbye" << endl;
+  exit(0);
 }
 
 int main()
@@ -174,6 +177,11 @@ int main()
     {
       DeleteCMD();
       break;
+    }
+    case EXIT:
+    {
+      ExitCMD();
+      return 0;
     }
     default:
       break;
