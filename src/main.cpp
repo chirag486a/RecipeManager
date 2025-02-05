@@ -62,7 +62,7 @@ void AddCMD()
   {
     cout << "Adding..." << endl;
     Recipe r = Recipe();
-    if(AskData(r) == 0)
+    if (AskData(r) == 0)
     {
       return;
     }
@@ -89,7 +89,14 @@ void ViewCMD()
       return;
     }
     cout << endl;
-    ShowRecipe(recipes[size - 1]);
+    int servings = AskServingsNumber(recipes[size - 1]);
+    if (servings == 0)
+    {
+      servings = recipes[size - 1].servings;
+    }
+    Recipe r = prepareRecipe(recipes[size - 1], servings);
+    ShowRecipe(r);
+
     cout << endl;
     cout << "Enter 0 to go back: ";
     string status = "";

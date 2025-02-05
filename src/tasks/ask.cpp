@@ -14,13 +14,42 @@ void AskServings(int &num)
 
     int status = GetInput(num);
 
-    if (status == -1 || status == 0)
+    if (status == -1)
     {
-      cout << "Invalid serving (serving must be number greater than 0)" << endl;
+      cout << "Invalid serving." << endl;
       continue;
     }
     break;
   }
+}
+
+int AskIngredientName(string &str)
+{
+  cout << "Ingredient Name: ";
+  GetInput(str);
+  if (str.empty())
+  {
+    return 0;
+  }
+  return 1;
+}
+int AskIngredientQuantity(float &num)
+{
+  cout << "Ingredient Quantity: ";
+  int status = GetInput(num);
+  if (status == -1)
+    return 0;
+  return 1;
+};
+int AskIngredientUnit(string &str)
+{
+  cout << "Unit: ";
+  GetInput(str);
+  if (str.empty())
+  {
+    return 0;
+  }
+  return 1;
 }
 
 void AskIngredients(vector<Ingredient> &ingredients)
@@ -30,8 +59,7 @@ void AskIngredients(vector<Ingredient> &ingredients)
   {
     Ingredient i = Ingredient();
     cout << "Enter Ingredients(Leave blank if finished)" << endl;
-    cout << "Ingredient Name: ";
-    int status = GetInput(i.name);
+    int status = AskIngredientName(i.name);
     if (status == 0)
     {
       if (ingredients.empty())
@@ -45,22 +73,20 @@ void AskIngredients(vector<Ingredient> &ingredients)
     }
     while (true)
     {
-      cout << "Ingredient Quantity: ";
-      int status = GetInput(i.quantity);
-      if (status == -1)
+      int status = AskIngredientQuantity(i.quantity);
+      if (status == 0)
       {
-        cout << "Invalid quantity (quantity must be number greater than 0)" << endl;
+        cout << "Invalid quantity" << endl;
         continue;
       }
       break;
     }
     while (true)
     {
-      cout << "Unit: ";
-      int status = GetInput(i.unit);
+      int status = AskIngredientUnit(i.unit);
       if (status == 0)
       {
-        cout << "Unit cannot be empty";
+        cout << "Invalid unit" << endl;
         continue;
       }
       break;
@@ -146,4 +172,17 @@ int AskRecipeNoToShow(const vector<Recipe> &recipes)
     break;
   }
   return recipeNumber;
+}
+
+int AskServingsNumber(const Recipe &r)
+{
+  int servings = 0;
+  cout << "Enter number of servings(" << r.servings << " is default): ";
+  int status = GetInput(servings);
+  if (status == -1)
+  {
+    cout << "Invalid input" << endl;
+    return -1;
+  }
+  return servings;
 }
