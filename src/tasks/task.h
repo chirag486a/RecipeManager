@@ -15,5 +15,6 @@ void ShowRecipe(const Recipe &r);
 int DeleteRecipe(vector<Recipe> &recipes);
 void saveToFile(const string filename, const vector<Recipe> &recipes);
 int loadFromFile(const string filename, vector<Recipe> &recipes);
+int AskEdit(Recipe &oldRecipe);
 
 #endif

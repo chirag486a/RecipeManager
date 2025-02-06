@@ -110,7 +110,28 @@ void ViewCMD()
 }
 void EditCMD()
 {
-  cout << "Editing..." << endl;
+  while (true)
+  {
+    cout << "Editing..." << endl;
+    int size = AskRecipeNoToShow(recipes);
+    if (size <= 0)
+    {
+      return;
+    }
+    if (AskEdit(recipes[size - 1]) == 0)
+    {
+      return;
+    }
+    saveToFile(filename, recipes);
+    cout << "Recipe edited" << endl;
+    cout << "Enter 0 to go back: ";
+    string status = "";
+    GetInput(status);
+    if (status == "0")
+    {
+      return;
+    }
+  }
 }
 void SearchCMD()
 {
