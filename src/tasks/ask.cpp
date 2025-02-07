@@ -98,13 +98,12 @@ void AskIngredients(vector<Ingredient> &ingredients)
 void AskSteps(vector<string> &steps, const string recipeName)
 {
 
-  int stepCount = 0;
   cout
       << "Enter steps to prepare(Leaave blank if finished)" << recipeName << endl;
   while (true)
   {
     string step = "";
-    cout << "Step " << stepCount + 1 << ": ";
+    cout << "Step " << steps.size() + 1 << ": ";
 
     int status = GetInput(step);
 
@@ -118,7 +117,6 @@ void AskSteps(vector<string> &steps, const string recipeName)
       break;
     }
     steps.push_back(step);
-    stepCount++;
   }
 }
 
@@ -289,7 +287,7 @@ int AskEdit(Recipe &oldRecipe)
 
     if (cmd == 0)
     {
-      return 0;
+      break;
     }
 
     if (cmd == 1)
@@ -315,7 +313,7 @@ int AskEdit(Recipe &oldRecipe)
           break;
         }
         Ingredient &ingredient = oldRecipe.ingredient[i - 1];
-        cout << "Leave Empty if no change(Ingredient Name: " << ingredient.name << ")" << endl;
+        cout << "Leave Empty if no change(Ingredient Name: " << oldRecipe.ingredient[i - 1].name << ")" << endl;
         ingredient.name = "";
         ingredient.quantity = 0;
         ingredient.unit = "";
@@ -324,13 +322,13 @@ int AskEdit(Recipe &oldRecipe)
         {
           oldRecipe.ingredient[i - 1].name = ingredient.name;
         }
-        cout << "Leave 0 if no change(Ingredient Quantity: " << ingredient.quantity << ")" << endl;
+        cout << "Leave 0 if no change(Ingredient Quantity: " << oldRecipe.ingredient[i - 1].quantity << ")" << endl;
         AskIngredientQuantity(ingredient.quantity);
         if (!(ingredient.quantity == 0))
         {
           oldRecipe.ingredient[i - 1].quantity = ingredient.quantity;
         }
-        cout << "Leave Empty if no change(Unit: " << ingredient.unit << ")" << endl;
+        cout << "Leave Empty if no change(Unit: " << oldRecipe.ingredient[i - 1].unit << ")" << endl;
         AskIngredientUnit(ingredient.unit);
         if (!(ingredient.unit.empty()))
         {
@@ -360,8 +358,91 @@ int AskEdit(Recipe &oldRecipe)
           break;
         }
       }
-      return 1;
     }
   }
+  while (true)
+  {
+    int cmd = 0;
+
+    cout << "Editing Steps" << endl;
+    cmd = AskEditCMD();
+    if (cmd == 0)
+    {
+      break;
+    }
+    if (cmd == 1)
+    {
+      AskSteps(oldRecipe.steps, oldRecipe.name);
+      cout << "Step added" << endl;
+      cout << "Enter 0 to exit adding step: ";
+      string redo = "";
+      GetInput(redo);
+      if (redo == "0")
+      {
+        return 1;
+      }
+    }
+    if (cmd == 2)
+    {
+      while (true)
+      {
+        cout << "Editing " << oldRecipe.name << " recipe steps.";
+        int i = 0;
+        for (const string &step : oldRecipe.steps)
+        {
+          cout << "Step " << ++i << "." << step << endl;
+        }
+        cout << "Enter step number to edit(0 to exit): ";
+        int num = 0;
+        int status = GetInput(num);
+        if (status == -1)
+        {
+          cout << "Invalid input" << endl;
+          continue;
+        }
+        if (num == 0)
+        {
+          break;
+        }
+        cout << "Step " << num << ".";
+        string tempStep = "";
+        status = 0;
+        status = GetInput(tempStep);
+        if (status == 0)
+        {
+          continue;
+        }
+        oldRecipe.steps[num - 1] = tempStep;
+      }
+    }
+    if (cmd == 3)
+    {
+      cout << "Deleting " << oldRecipe.name << " recipe steps." << endl;
+      int i = 0;
+      for (const string &step : oldRecipe.steps)
+      {
+        cout << "Step " << ++i << "." << step << endl;
+      }
+      cout << "Enter step number to delete(0 to exit): ";
+      int num = 0;
+      int status = GetInput(num);
+      if (status == -1)
+      {
+        cout << "Invalid input" << endl;
+        continue;
+      }
+      if (num == 0)
+      {
+        break;
+      }
+      if (oldRecipe.steps.size() <= 1)
+      {
+        cout << "Recipe must have at atleast one steps" << endl;
+        continue;
+      }
+      oldRecipe.steps.erase(oldRecipe.steps.begin() + (num - 1));
+    }
+  }
+
   return 1;
 }
