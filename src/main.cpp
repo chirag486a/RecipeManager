@@ -135,7 +135,50 @@ void EditCMD()
 }
 void SearchCMD()
 {
-  cout << "Searching..." << endl;
+  while (true)
+  {
+
+    cout << "Searching..." << endl;
+    vector<size_t> indexes;
+    AskSearch(recipes, indexes);
+
+    cout << "Your Search" << endl;
+    if (indexes.empty())
+    {
+      cout << "Nothing found" << endl;
+    }
+    int j = 0;
+    for (const size_t i : indexes)
+    {
+      cout << ++j << "." << " " << recipes[i].name << endl;
+    }
+    cout << "Enter which result to view (0 to exit): ";
+
+    int recipeNum = 0;
+    GetInput(recipeNum);
+    if (recipeNum <= 0)
+    {
+      return;
+    }
+
+    cout << endl;
+    int servings = AskServingsNumber(recipes[recipeNum - 1]);
+    if (servings == 0)
+    {
+      servings = recipes[recipeNum - 1].servings;
+    }
+    Recipe r = prepareRecipe(recipes[recipeNum - 1], servings);
+    ShowRecipe(r);
+
+    cout << endl;
+    cout << "Enter 0 to go back: ";
+    string status = "";
+    GetInput(status);
+    if (status == "0")
+    {
+      return;
+    }
+  }
 }
 void DeleteCMD()
 {

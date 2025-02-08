@@ -446,3 +446,63 @@ int AskEdit(Recipe &oldRecipe)
 
   return 1;
 }
+
+string toLowercase(const std::string &str)
+{
+  string lowerStr = str;
+  transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+  return lowerStr;
+}
+
+bool caseInsensitiveContains(const std::string &mainStr, const std::string &queryStr)
+{
+  std::string lowerMainStr = toLowercase(mainStr);
+  std::string lowerQueryStr = toLowercase(queryStr);
+
+  return lowerMainStr.find(lowerQueryStr) != std::string::npos;
+}
+
+void AskSearch(vector<Recipe> &recipes, vector<size_t> &indexes)
+{
+  while (true)
+  {
+    cout << "Search Recipe by" << endl;
+    cout << "1. Recipe name" << endl;
+    cout << "2. Ingredient Name" << endl;
+
+    int cmd = 0;
+    cout << "How would you like to search recipe?(0 to exit) : ";
+    int status = GetInput(cmd);
+    if (status < 0)
+    {
+      cout << "Invalid Input" << endl;
+      continue;
+    }
+    if (cmd == 0)
+    {
+      break;
+    }
+    // Search By name
+    if (cmd == 1)
+    {
+      cout << "Enter Recipe name to search (empty to exit): ";
+      string queryName = "";
+      GetInput(queryName);
+      if (queryName.empty())
+      {
+        break;
+      }
+      indexes.clear();
+      for (size_t i = 0; i < recipes.size(); i++)
+      {
+        if (caseInsensitiveContains(recipes[i].name, queryName))
+        {
+          indexes.push_back(i);
+        };
+      }
+      break;
+    }
+  }
+
+  return;
+}
