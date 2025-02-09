@@ -26,7 +26,7 @@ $(TARGET): $(OBJS)
 
 # Compile source files into object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	mkdir -p $(dir $@)
+	mkdir -p $(dir $@) && touch data.txt
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Ensure build directory exists

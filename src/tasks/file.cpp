@@ -110,19 +110,16 @@ void saveToFile(const string filename, const vector<Recipe> &recipes)
 }
 int loadFromFile(const string filename, vector<Recipe> &recipes)
 {
-  ofstream outfile(filename);
-  if (!outfile.is_open())
-  {
-    cerr << "Error: could not find file" << endl;
-    return -1;
-  }
-  outfile.close();
   ifstream infile(filename, ios::in);
 
   if (!infile)
   {
-    std::cerr << "Error loading from file" << endl;
-    return -1;
+    ofstream file(filename, ios::out);
+    if (!file.is_open())
+    {
+      std::cerr << "Failed to create or open the file." << std::endl;
+      return -1;
+    }
   }
   string line;
   string NewLine = "\n";
