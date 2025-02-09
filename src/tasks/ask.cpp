@@ -502,6 +502,30 @@ void AskSearch(vector<Recipe> &recipes, vector<size_t> &indexes)
       }
       break;
     }
+    // Search by ingredient
+    if (cmd == 2)
+    {
+      cout << "Enter Ingredient name to search (empty to exit): ";
+      string queryName = "";
+      GetInput(queryName);
+      if (queryName.empty())
+      {
+        break;
+      }
+      indexes.clear();
+      for (size_t j = 0; j < recipes.size(); j++)
+      {
+        for (const Ingredient &i : recipes[j].ingredient)
+        {
+          if (caseInsensitiveContains(i.name, queryName))
+          {
+            indexes.push_back(j);
+            break;
+          };
+        }
+      }
+      break;
+    }
   }
 
   return;
